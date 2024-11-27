@@ -6,7 +6,7 @@ Thus, we proposes an automated development pipeline of DT for PT, which uses ope
 
 **Stay tuned: This repository will be updated shortly. In the meantime, feel free to explore the functionality of our Public Transport Digital Twin (PT DT) for Kista, Stockholm, Sweden, by watching the video 🎥 below.**
 
-![PT DT Video](media/opdtwin.mp4)
+[![Watch the PT DT video](media/optdtwin_video_thumbnail.png)](https://kth-my.sharepoint.com/:v:/g/personal/jostmann_ug_kth_se/Eex8tEcl6WpPrr5cjA7GvP8BTn5I4ueavzloHjAcWWlXkQ?e=g6EUJ9)
 
 ## Authors
 - Jonas Jostmann (jostmann@kth.se)
