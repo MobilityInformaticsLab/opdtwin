@@ -4,7 +4,7 @@ Despite its practical potential, the current adoptation of Digital Twins (DT) in
 
 Thus, we proposes an automated development pipeline of DT for PT, which uses open-source software and data that make it easy to access and extend. 
 
-Stay tuned: This repository will be updated shortly. In the meantime, feel free to explore the functionality of our Public Transport Digital Twin (PT DT) for Kista, Stockholm, Sweden, by watching the video 🎥 below. 
+**Stay tuned: This repository will be updated shortly. In the meantime, feel free to explore the functionality of our Public Transport Digital Twin (PT DT) for Kista, Stockholm, Sweden, by watching the video 🎥 below.**
 
 ![PT DT Video](media/opdtwin.mp4)
 
