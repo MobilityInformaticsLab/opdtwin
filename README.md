@@ -27,7 +27,7 @@ The basic idea is to obtain a three-dimensional model from OSM data. The process
 Subsequently the CityGML data is transformed into 3D Tiles for efficient visualization in the Cesium platform. We directly used Cesium ION's cloud storage function and loaded the Cesium.JS frontend using a Node.js server (find more info in section [Building Visualization](docs/source/detailed_guide/frontend/tutorial_frontend.md#nodejs-module-cesium-integration--czml-visualization)).
 
 **Visualization of the obtained 3D Buildings in Cesium:**
-[![Watch the PT DT video](docs/source/_static/optdtwin_video_thumbnail.png)](https://kth-my.sharepoint.com/:v:/g/personal/jostmann_ug_kth_se/Eex8tEcl6WpPrr5cjA7GvP8BTn5I4ueavzloHjAcWWlXkQ?e=g6EUJ9)
+[![Watch the PT DT video](docs/_static/optdtwin_video_thumbnail.png)](https://kth-my.sharepoint.com/:v:/g/personal/jostmann_ug_kth_se/Eex8tEcl6WpPrr5cjA7GvP8BTn5I4ueavzloHjAcWWlXkQ?e=g6EUJ9)
 
 ## Vehicle Data
 ### Overview
