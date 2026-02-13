@@ -17,7 +17,7 @@ The goal of our DT development pipeline is building an open-source digital twin 
 This tutorial will introduce how we addressed the three aspects from above: building data, vehicles/roads data, and the digital twin platform.
      
 **Overview of the development pipeline:**
-![[pipeline]](docs/source/_static/DT-Pipeline-Overview.png)
+![[pipeline]](docs/_static/DT-Pipeline-Overview.png)
 
 
 ## Building Data
