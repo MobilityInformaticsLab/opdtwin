@@ -1,0 +1,8 @@
+src/frontend/server/node_modules
+pycache
+docs/build
+.vscode
+# Ignore dynaconf secret files
+.secrets.*
+__pycache__/
+data

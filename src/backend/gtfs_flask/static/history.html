@@ -1,0 +1,67 @@
+<!-- 文件: static/history.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Historical Vehicle Visualization (CZML)</title>
+  <meta charset="utf-8" />
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+      #cesiumContainer { width: 100%; height: 100%; }
+      .panel {
+          position: absolute; top: 10px; left: 10px; z-index: 999;
+          background: rgba(255,255,255,0.8);
+          padding: 5px;
+          border-radius: 4px;
+      }
+      input { width: 260px; }
+      button { margin: 4px; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div class="panel">
+      <!-- 用户输入起止时间（ISO8601 格式） -->
+      <label>Start Time (ISO8601): <input id="startTime" value="2025-01-03T09:51:00Z" /></label><br/>
+      <label>End Time (ISO8601): <input id="endTime" value="2025-01-03T09:56:00Z" /></label><br/>
+      <button onclick="fetchHistoricalCZML()">Fetch Historical Data</button>
+  </div>
+
+  <script>
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0M2I0MGUyZi1lYTM0LTQ4M2UtYmQ5Yy1iNzUyMDYzNDY1MzUiLCJpZCI6MTkyNjk3LCJpYXQiOjE3MDg5ODgyMjl9.Co_7omT1cNRUYqYM7aSZ9fqduVzAnHOJx8Eygef6bE0';
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+          timeline: true,
+          animation: true,
+          shouldAnimate: true
+      });
+
+      function fetchHistoricalCZML() {
+          const startInput = document.getElementById('startTime').value;
+          const endInput = document.getElementById('endTime').value;
+
+          const startTimestamp = new Date(startInput).getTime() / 1000;
+          const endTimestamp = new Date(endInput).getTime() / 1000;
+
+          if (isNaN(startTimestamp) || isNaN(endTimestamp)) {
+              alert("Invalid time format. Please input a valid ISO8601 time, e.g. 2025-01-03T09:51:00Z");
+              return;
+          }
+          if (startTimestamp >= endTimestamp) {
+              alert("Start time must be earlier than end time.");
+              return;
+          }
+
+          const url = `/historical?start=${startTimestamp}&end=${endTimestamp}`;
+          Cesium.CzmlDataSource.load(url).then(function(dataSource) {
+              // 加载历史数据前先清除之前的数据
+              viewer.dataSources.removeAll(true);
+              viewer.dataSources.add(dataSource);
+          }).catch(function(error) {
+              console.error("Error loading historical CZML:", error);
+              alert("Failed to retrieve historical data.");
+          });
+      }
+  </script>
+</body>
+</html>

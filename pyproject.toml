@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "kth-odt-pt"
+version = "0.1.0"
+description = ""
+authors = ["Jonas Jostmann <jostmann@kth.se>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sphinx = "^8.2.3"
+myst-parser = "^4.0.1"
+sphinx-rtd-theme = "^3.0.2"
+requests = "^2.32.5"
+numpy = "^2.3.3"
+osm2geojson = "^0.2.6"
+geojson = "^3.2.0"
+flask = "^3.1.2"
+flask-cors = "^6.0.1"
+pymongo = "^4.15.3"
+protobuf = "^6.33.0"
+pandas = "^2.3.3"
+pyproj = "^3.7.2"
+rtree = "^1.4.1"
+dynaconf = "^3.2.12"
+lxml = "^6.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

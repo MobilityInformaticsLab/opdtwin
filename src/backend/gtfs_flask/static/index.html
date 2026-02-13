@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Vehicle Visualization (CZML)</title>
+  <meta charset="utf-8" />
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+      #cesiumContainer { width: 100%; height: 100%; }
+      .panel {
+          position: absolute; top: 10px; left: 10px; z-index: 999;
+          background: rgba(255,255,255,0.8);
+          padding: 5px;
+          border-radius: 4px;
+      }
+      button { margin: 4px; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div class="panel">
+      <button onclick="window.open('/history_page', '_blank')">View Historical Data</button>
+  </div>
+
+  <script>
+      Cesium.Ion.defaultAccessToken = 'YOUR_CESIUM_ION_ACCESS_TOKEN';
+      
+
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+          baseLayerPicker: true,
+
+          baseLayer: new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({
+          url: "https://tile.openstreetmap.org/"
+  })),
+          timeline: true,
+          animation: true,
+          shouldAnimate: true
+      });
+
+      async function loadData() {
+        try {
+
+          const tileset1 = await Cesium.Cesium3DTileset.fromIonAssetId(<YOUR_3D_TILESET_ASSET_ID>);
+          viewer.scene.primitives.add(tileset1);
+          await viewer.zoomTo(tileset1);
+          } catch (error) {
+          console.error("Failed to load static data: ", error);
+        }
+      }
+
+
+      loadData();
+      
+      let realtimeDataSource = null;
+
+      function updateClockRange(czml) {
+        let startTimes = [];
+        let endTimes = [];
+        
+        czml.forEach(packet => {
+            if (packet.id !== "document" && packet.availability) {
+                let parts = packet.availability.split("/");
+                if (parts.length === 2) {
+                    let start = Cesium.JulianDate.fromIso8601(parts[0]);
+                    let end = Cesium.JulianDate.fromIso8601(parts[1]);
+                    startTimes.push(start);
+                    endTimes.push(end);
+                }
+            }
+        });
+
+        if (startTimes.length === 0 || endTimes.length === 0) return;
+
+        const overallStart = startTimes.reduce((min, cur) => 
+            Cesium.JulianDate.lessThan(cur, min) ? cur : min, startTimes[0]);
+        const overallEnd = endTimes.reduce((max, cur) => 
+            Cesium.JulianDate.greaterThan(cur, max) ? cur : max, endTimes[0]);
+
+        
+        if (!viewer.clock.startTime || Cesium.JulianDate.lessThan(overallStart, viewer.clock.startTime)) {
+            viewer.clock.startTime = overallStart;
+        }
+        if (!viewer.clock.stopTime || Cesium.JulianDate.greaterThan(overallEnd, viewer.clock.stopTime)) {
+            viewer.clock.stopTime = overallEnd;
+        }
+
+        viewer.clock.clockRange = Cesium.ClockRange.CLAMPED;
+        viewer.clock.multiplier = 1;
+
+        
+        if (Cesium.JulianDate.lessThan(viewer.clock.currentTime, viewer.clock.startTime)) {
+            viewer.clock.currentTime = Cesium.JulianDate.clone(viewer.clock.startTime);
+        } else if (Cesium.JulianDate.greaterThan(viewer.clock.currentTime, viewer.clock.stopTime)) {
+            viewer.clock.currentTime = Cesium.JulianDate.clone(viewer.clock.stopTime);
+        }
+    }
+
+    function loadRealTimeCZML() {
+        fetch('/vehicles')
+            .then(response => response.json())
+            .then(czml => {
+                
+                updateClockRange(czml);
+                
+                
+                if (realtimeDataSource) {
+                    realtimeDataSource.process(czml, { 
+                       
+                        destroyDeletedEntities: false  
+                    });
+                } else {
+                    Cesium.CzmlDataSource.load(czml).then(dataSource => {
+                        realtimeDataSource = dataSource;
+                        viewer.dataSources.add(dataSource);
+                    });
+                }
+                
+                
+                if (viewer.clock.shouldAnimate !== true) {
+                    viewer.clock.shouldAnimate = true;
+                }
+            })
+            .catch(console.error);
+    }
+
+      
+      loadRealTimeCZML();
+      setInterval(loadRealTimeCZML, 3000);
+  </script>
+</body>
+</html>
