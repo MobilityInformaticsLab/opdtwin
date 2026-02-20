@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Transit Open Digital Twin Platform documentation
+Welcome to the MobilityTwin-PT (OPDTwin) documentation!
 ====================================================================
 
 .. toctree::

@@ -1,4 +1,4 @@
-# 🚍 Open Public Transport Digital Twin (OPDTwin) 
+# 🚍 MobilityTwin-PT (OPDTwin)
 
 Despite its practical potential, the current adoptation of Digital Twins (DT) in the transportation domain and especially in Public Transport (PT) is relatively slow. A significant barrier is the substantial effort and investment in resources required during the development phase, especially for informative visualizations, thus limiting its accessibility to PT agencies. 
 

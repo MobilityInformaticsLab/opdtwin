@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Transit Open Digital Twin Platform (Transit ODT)'
+project = 'MobilityTwin-PT (OPDTwin)'
 copyright = '2025, Tong Mo, Jonas Jostmann, Zhenliang Ma'
 author = 'Tong Mo, Jonas Jostmann, Zhenliang Ma'
 
