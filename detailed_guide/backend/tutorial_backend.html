@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend Layer &mdash; MobilityTwin-PT (OPDTwin)  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Frontend Layer" href="../frontend/tutorial_frontend.html" />
+    <link rel="prev" title="Input Layer" href="../input/tutorial_input.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MobilityTwin-PT (OPDTwin)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/tutorial_overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Detailed Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../input/tutorial_input.html">Input Layer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Backend Layer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sumo-simulation-module">SUMO Simulation Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#floating-car-data-processing-module">Floating Car Data Processing Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gtfs-real-time-processing">GTFS Real-time Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../frontend/tutorial_frontend.html">Frontend Layer</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MobilityTwin-PT (OPDTwin)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Detailed Guide</a></li>
+      <li class="breadcrumb-item active">Backend Layer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/detailed_guide/backend/tutorial_backend.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="backend-layer">
+<h1>Backend Layer<a class="headerlink" href="#backend-layer" title="Link to this heading"></a></h1>
+<p>In the following we describe what steps are necessary to prepare the input obtained in the previous steps for the visualization in the frontend step.</p>
+<section id="sumo-simulation-module">
+<h2>SUMO Simulation Module<a class="headerlink" href="#sumo-simulation-module" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Input</strong>:</p>
+<ol class="arabic simple">
+<li><p>GTFS Static data (.zip)</p></li>
+<li><p>Simulation parameters and configuration (.net.xml, .trips.xml, .rou.xml, and .sumocfg etc)</p></li>
+</ol>
+</li>
+<li><p><strong>Function</strong>:</p>
+<ol class="arabic simple">
+<li><p>Convert and integrate GTFS Static data into the SUMO simulation environment.</p></li>
+<li><p>Generate traffic simulation and then output <strong>Floating Car Data</strong> (XML format).</p></li>
+</ol>
+</li>
+<li><p><strong>Output</strong>:</p>
+<ul>
+<li><p>Floating Car Data (FCD) XML files</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Transform GTFS to SUMO Format</strong>:</p>
+<p>In the following we describe how to transform the GTFS data into SUMO format and run the simulation with private vehicle traffic subsequently. Further information about how to integrate GTFS data into SUMO can be found in the <a class="reference external" href="https://sumo.dlr.de/docs/Tutorials/GTFS.html">SUMO documentation</a></p>
+<ol class="arabic simple">
+<li><p>We use GTFS Regional data (GTFS static) from <a class="reference external" href="https://www.trafiklab.se/api/our-apis/koda/">KoDA</a> as input retrieved in the previous step. We use one hour of data to demonstrate the usability of our pipeline. You can generate longer time periods with no problem.</p></li>
+<li><p>Subsequently, we need to map the GTFS data to the SUMO network. OSM data lacks details such as departure intervals and schedules. GTFS provides these core operational data, which can also solve the possible problems of missing lines or station locations in OSM. Note: make sure the file <code class="docutils literal notranslate"><span class="pre">osm_ptlines.xml</span></code> is available before transforming the GTFS data into SUMO format as it includes necessary data for the transformation. The data is obtained from OpenStreetMap (OSM) when downloading the network. Afterwards use the SUMO tool: <code class="docutils literal notranslate"><span class="pre">gtfs2pt.py</span></code> to transform the GTFS data into SUMO format:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="s2">&quot;D:\Sumo</span><span class="se">\t</span><span class="s2">ools\import\gtfs\gtfs2pt.py&quot;</span> <span class="o">^</span>
+<span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">NETWORK</span> <span class="n">FILE</span><span class="o">&gt;</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">gtfs</span> <span class="o">&lt;</span><span class="n">GTFS</span> <span class="n">ZIP</span> <span class="n">FOLDER</span><span class="o">&gt;</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">date</span> <span class="o">&lt;</span><span class="n">SELECTED</span> <span class="n">GTFS</span> <span class="n">DATE</span><span class="o">&gt;</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">osm</span><span class="o">-</span><span class="n">routes</span> <span class="o">&lt;</span><span class="n">FILE</span> <span class="n">PATH</span> <span class="n">TO</span> <span class="n">osm_ptlines</span><span class="o">.</span><span class="n">xml</span><span class="o">&gt;</span><span class="s2">&quot; ^</span>
+<span class="o">--</span><span class="n">repair</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>After few minutes, the script generates the following files:</p></li>
+</ol>
+<ul class="simple">
+<li><p>vtypes.xml</p></li>
+<li><p>gtfs_pt_vehicles.add.xml (defining the single public transport vehicles)</p></li>
+<li><p>gtfs_pt_stops.add.xml (defining the stops)</p></li>
+<li><p>gtfs_missing.xml contains the elements (stops and ptLines) of the GTFS data that could not be imported</p></li>
+<li><p>gtfs_repair_errors.txt contains the warnings and errors from the repair of the ptLines</p></li>
+</ul>
+<ol class="arabic simple" start="4">
+<li><p>These output files allow to run a base simulation with focus on the public transport data. For that create a <code class="docutils literal notranslate"><span class="pre">pt_only.sumocfg</span></code> file:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;configuration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;http://sumo.dlr.de/xsd/sumoConfiguration.xsd&quot;&gt;
+
+    &lt;input&gt;
+        &lt;net-file value=&quot;osm.net.xml.gz&quot;/&gt;
+        &lt;additional-files value=&quot;vtypes.xml,gtfs_pt_stops.add.xml,gtfs_pt_vehicles.rou.xml,edgeOutputnoise.add.xml,edgeOutputemissions.add.xml,edgeOutputtraffic.add.xml&quot;/&gt;
+    &lt;/input&gt;
+
+    &lt;time&gt;
+        &lt;begin value=&quot;28800&quot;/&gt;
+        &lt;end value=&quot;32400&quot;/&gt;
+    &lt;/time&gt;
+
+    &lt;processing&gt;
+        &lt;ignore-route-errors value=&quot;true&quot;/&gt;
+    &lt;/processing&gt;
+
+    &lt;routing&gt;
+        &lt;device.rerouting.adaptation-steps value=&quot;18&quot;/&gt;
+        &lt;device.rerouting.adaptation-interval value=&quot;10&quot;/&gt;
+    &lt;/routing&gt;
+
+    &lt;output&gt;
+        &lt;fcd-output value=&quot;fcdOutput.xml&quot;/&gt;
+        &lt;fcd-output.geo value=&quot;true&quot;/&gt;
+    &lt;/output&gt;
+
+&lt;/configuration&gt;
+</pre></div>
+</div>
+<p>And execute: <code class="docutils literal notranslate"><span class="pre">sumo</span> <span class="pre">-c</span> <span class="pre">pt_only.sumocfg</span></code></p>
+<p>In addtion to the Public Transport data also individual vehicles can be simulated to simulate the interactions with Public Transport. In the following we demonstrate how additional data about the Public Transport and invidual vehicles can be calculated on a edge level. This can inlcude noise, speed and other variables.</p>
+<p><strong>Create Additional Edge-based Outputs</strong></p>
+<ol class="arabic simple">
+<li><p>To correctly calculate and output additional edgel-level data such as vehicle speeds or noise, additional files specifying the data to be extracted from the simulation need to be specified. As an example we create one file named <code class="docutils literal notranslate"><span class="pre">edgeOutputnoise.add.xml</span></code> to export edge-based noise data:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">additional</span><span class="o">&gt;</span>
+ <span class="o">&lt;</span><span class="n">edgeData</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;noise&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;harmonoise&quot;</span> <span class="n">period</span><span class="o">=</span><span class="s2">&quot;10&quot;</span> 
+            <span class="n">file</span><span class="o">=</span><span class="s2">&quot;edgeOutputnoise.xml&quot;</span> 
+            <span class="n">excludeEmpty</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">additional</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Besides noise, there are other road level attributes that can be extracted. More details can be found in the <a class="reference external" href="https://sumo.dlr.de/docs/Simulation/Output/Lane-_or_Edge-based_Traffic_Measures.html">SUMO documentation</a>.</p>
+<ol class="arabic simple" start="6">
+<li><p>In addition to the Public transport vehicles, we can co-simulate private cars. For this demonstration we generate random car traffic, if there is calibrated OD demand data available, more realistic scenarios can be specified. We use SUMO’s <code class="docutils literal notranslate"><span class="pre">randomTrips.py</span></code> tool to generate a random flow of vehicles and create the corresponding config file for SUMO <code class="docutils literal notranslate"><span class="pre">pt_and_vehicles.sumocfg</span></code> with the following content, specifying the edge-based output data:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;configuration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;http://sumo.dlr.de/xsd/sumoConfiguration.xsd&quot;&gt;
+
+    &lt;input&gt;
+        &lt;net-file value=&quot;osm.net.xml.gz&quot;/&gt;
+        &lt;route-files value=&quot;random_cars.rou.xml&quot;/&gt;
+        &lt;additional-files value=&quot;vtypes.xml,gtfs_pt_stops.add.xml,gtfs_pt_vehicles.rou.xml,edgeOutputnoise.add.xml,edgeOutputemissions.add.xml,edgeOutputtraffic.add.xml&quot;/&gt;
+    &lt;/input&gt;
+
+    &lt;time&gt;
+        &lt;begin value=&quot;28800&quot;/&gt;
+        &lt;end value=&quot;32400&quot;/&gt;
+    &lt;/time&gt;
+
+    &lt;processing&gt;
+        &lt;ignore-route-errors value=&quot;true&quot;/&gt;
+    &lt;/processing&gt;
+
+    &lt;routing&gt;
+        &lt;device.rerouting.adaptation-steps value=&quot;18&quot;/&gt;
+        &lt;device.rerouting.adaptation-interval value=&quot;10&quot;/&gt;
+    &lt;/routing&gt;
+
+    &lt;output&gt;
+        &lt;fcd-output value=&quot;fcdOutput.xml&quot;/&gt;
+        &lt;fcd-output.geo value=&quot;true&quot;/&gt;
+        &lt;emission-output value=&quot;VEHICLEOutputnoise.xml&quot;/&gt;
+        &lt;edgedata-output value=&quot;DEFAULT_EDGEDATA.xml&quot;/&gt;
+    &lt;/output&gt;
+
+    &lt;report&gt;
+        &lt;verbose value=&quot;true&quot;/&gt;
+        &lt;duration-log.statistics value=&quot;true&quot;/&gt;
+        &lt;no-step-log value=&quot;true&quot;/&gt;
+    &lt;/report&gt;
+
+    &lt;gui_only&gt;
+        &lt;gui-settings-file value=&quot;osm.view.xml&quot;/&gt;
+    &lt;/gui_only&gt;
+
+&lt;/configuration&gt;
+</pre></div>
+</div>
+<p>Subsequently, we can run the simulation by executing: <code class="docutils literal notranslate"><span class="pre">sumo</span> <span class="pre">-c</span> <span class="pre">pt_and_vehicles.sumocfg</span></code> and obtain the outputs.</p>
+</section>
+<section id="floating-car-data-processing-module">
+<h2>Floating Car Data Processing Module<a class="headerlink" href="#floating-car-data-processing-module" title="Link to this heading"></a></h2>
+<p>This module is responsible for processing the FCD and edge-based outputs into Cesium format to ultimately visualize the simulation outputs in the interactive visualization platform.</p>
+<ul class="simple">
+<li><p><strong>Input</strong>:</p>
+<ul>
+<li><p>SUMO’s XML-formatted floating car, and edge-level data</p></li>
+</ul>
+</li>
+<li><p><strong>Process</strong>:</p>
+<ol class="arabic simple">
+<li><p>Convert SUMO’s XML-formatted floating car, and edge-level data to CSV</p></li>
+<li><p>Transform CSV data into <strong>CZML format</strong> for following front-end visualization</p></li>
+</ol>
+</li>
+<li><p><strong>Output</strong>:</p>
+<ul>
+<li><p>CZML files</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Detailed Steps</strong>:</p>
+<ol class="arabic simple">
+<li><p>The first step considers the preparation of edge-level data for visualization. For that the edges of the OSM-network need to transformed into GeoJSON and subsequently combined with the data into CZML. SUMO’s <code class="docutils literal notranslate"><span class="pre">net2geojson</span></code> tool supports directly converting the network into GeoJSON:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="s2">&quot;D:\Sumo</span><span class="se">\t</span><span class="s2">ools</span><span class="se">\n</span><span class="s2">et</span><span class="se">\n</span><span class="s2">et2geojson.py&quot;</span> <span class="o">^</span>
+<span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">SUMO_NETWORK</span><span class="o">&gt;</span> <span class="o">^</span>
+<span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">OUTPUT_GEOJSON</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Next, the XML files containing the edge level data (e.g., <code class="docutils literal notranslate"><span class="pre">edgeOutputnoise.xml</span></code>) need to be converted into a CSV file (<code class="docutils literal notranslate"><span class="pre">road_information.csv</span></code>) using our custom script <code class="docutils literal notranslate"><span class="pre">src/backend/road_xml2csv.py</span></code>. This prepares for dynamically displaying road level information in CesiumJS after combining it with the road shape information from the osm network.
+In the code,</p></li>
+</ol>
+<ul class="simple">
+<li><p>Input:</p>
+<ul>
+<li><p>Edge-based XML file generated by SUMO (contains <code class="docutils literal notranslate"><span class="pre">interval</span></code> and <code class="docutils literal notranslate"><span class="pre">edge</span></code> nodes, recording road/edge attributes at different timesteps)</p></li>
+<li><p>Optional: Specific edge attributes to extract (e.g., noise, speed, CO2_abs). If omitted, all edge attributes in the XML are automatically detected and used.</p></li>
+</ul>
+</li>
+<li><p>Output:</p>
+<ul>
+<li><p>Complete CSV file: Each row includes <code class="docutils literal notranslate"><span class="pre">timestep</span></code>, <code class="docutils literal notranslate"><span class="pre">edge</span> <span class="pre">ID</span></code>, and values of specified/auto-detected attributes (missing edge values for any timestep are filled with 0).</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">&lt;</span><span class="n">script_name</span><span class="o">&gt;.</span><span class="n">py</span> \
+<span class="o">-</span><span class="n">i</span> <span class="o">&lt;</span><span class="n">Path</span> <span class="n">to</span> <span class="nb">input</span> <span class="n">SUMO</span> <span class="n">edge</span><span class="o">-</span><span class="n">based</span> <span class="n">XML</span> <span class="n">file</span><span class="o">.&gt;</span> \
+<span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">Optional</span><span class="p">:</span> <span class="n">Path</span> <span class="n">to</span> <span class="n">output</span> <span class="n">CSV</span> <span class="n">file</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">same</span> <span class="n">name</span> <span class="k">as</span> <span class="n">XML</span> <span class="k">with</span> <span class="s2">&quot;_edge_matrix.csv&quot;</span> <span class="n">suffix</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">-</span><span class="n">f</span> <span class="o">&lt;</span><span class="n">Optional</span><span class="p">:</span> <span class="n">Edge</span> <span class="n">attributes</span> <span class="n">to</span> <span class="n">include</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">noise</span> <span class="n">speed</span> <span class="n">fuel_abs</span> <span class="n">CO2_abs</span><span class="p">),</span> <span class="n">multiple</span> <span class="n">fields</span> <span class="n">separated</span> <span class="n">by</span> <span class="n">spaces</span><span class="o">.&gt;</span>
+</pre></div>
+</div>
+<p>Example execution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">road_xml2csv</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">i</span> <span class="n">edgeOutputnoise</span><span class="o">.</span><span class="n">xml</span> <span class="o">-</span><span class="n">o</span> <span class="n">road_information</span><span class="o">.</span><span class="n">csv</span> <span class="o">-</span><span class="n">f</span> <span class="n">noise</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>After that, we can run the custom script <code class="docutils literal notranslate"><span class="pre">src/backend/main_trafficinput.py</span></code> to generate CZML files from the generated CSV files. The script generates two CZML files, one for vehicle-level visualization, another for edge-level visualization. During the conversion of vehicles into 3D moving vehicles, we utilize techniques of the work of Beil et al.: https://github.com/tum-gis/sumo-to-czml to visualize their driving direction.</p></li>
+</ol>
+<p>In the code,</p>
+<ul class="simple">
+<li><p>Input:</p>
+<ul>
+<li><p>Vehicle trajectory data（FCD data）generated by SUMO</p></li>
+<li><p>GeoJSON data (road ID, shape, and coordinates system)</p></li>
+<li><p>GLB format models (such as car.glb and tram.glb)</p></li>
+<li><p>CSV data including timestep, road ID and noise values (converted from edgeOutputnoise.add.xml)</p></li>
+<li><p>CSV data including timestep, vehicle ID, type, vehicle location information (x,y,z),vehicle motion information (slope, angle), noise values</p></li>
+<li><p>Simulation start time (format: YYYY-MM-DD)</p></li>
+<li><p>CurrentTime: Define the position of the cursor on the CesiumJS timeline.</p></li>
+<li><p>Road level attributes: Attributes that want to be visualized, such as the average speed/average noise/ emissions of the road level.</p></li>
+</ul>
+</li>
+<li><p>Output:</p>
+<ul>
+<li><p>CZML file containing vehicle 3D model trajectory, capable of rendering animations in CesiumJS</p></li>
+<li><p>CZML file containing color mapping of road noise for visualizing noise distribution</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">backend</span><span class="o">/</span><span class="n">maintraffic_input</span><span class="o">.</span><span class="n">py</span> \
+<span class="o">--</span><span class="n">xml</span> <span class="o">&lt;</span><span class="n">SUMO</span> <span class="n">FCD</span> <span class="p">(</span><span class="n">vehicle</span> <span class="n">trajectory</span><span class="p">)</span> <span class="n">XML</span> <span class="n">file</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">csv</span> <span class="o">&lt;</span><span class="n">Intermediate</span><span class="o">/</span><span class="n">output</span> <span class="n">CSV</span> <span class="n">path</span> <span class="k">for</span> <span class="n">vehicle</span> <span class="n">data</span> <span class="p">(</span><span class="n">timestep</span><span class="p">,</span> <span class="n">ID</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span><span class="o">&gt;</span> \
+<span class="o">--</span><span class="n">road</span><span class="o">-</span><span class="n">csv</span> <span class="o">&lt;</span><span class="n">Input</span> <span class="n">CSV</span> <span class="n">path</span> <span class="k">for</span> <span class="n">road</span> <span class="n">noise</span> <span class="n">data</span> <span class="p">(</span><span class="n">timestep</span><span class="p">,</span> <span class="n">road</span> <span class="n">ID</span><span class="p">,</span> <span class="n">noise</span> <span class="n">value</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">geojson</span> <span class="o">&lt;</span><span class="n">Input</span> <span class="n">GeoJSON</span> <span class="n">path</span> <span class="k">for</span> <span class="n">road</span> <span class="n">data</span> <span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">vehicles</span><span class="o">-</span><span class="n">czml</span> <span class="o">&lt;</span><span class="n">Output</span> <span class="n">CZML</span> <span class="n">path</span> <span class="k">for</span> <span class="n">vehicle</span> <span class="mi">3</span><span class="n">D</span> <span class="n">trajectory</span> <span class="n">animation</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">roads</span><span class="o">-</span><span class="n">czml</span> <span class="o">&lt;</span><span class="n">Output</span> <span class="n">CZML</span> <span class="n">path</span> <span class="k">for</span> <span class="n">road</span> <span class="n">noise</span> <span class="n">color</span> <span class="n">visualization</span><span class="o">.&gt;</span>\
+<span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">date</span> <span class="o">&lt;</span><span class="n">Simulation</span> <span class="n">start</span> <span class="n">date</span> <span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="n">YYYY</span><span class="o">-</span><span class="n">MM</span><span class="o">-</span><span class="n">DD</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">current</span><span class="o">-</span><span class="n">time</span> <span class="o">&lt;</span><span class="n">Initial</span> <span class="n">cursor</span> <span class="n">time</span> <span class="n">on</span> <span class="n">Cesium</span> <span class="n">timeline</span> <span class="p">(</span><span class="n">seconds</span> <span class="n">since</span> <span class="n">start</span> <span class="n">date</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">road</span><span class="o">-</span><span class="n">metric</span> <span class="o">&lt;</span><span class="n">Road</span> <span class="n">metric</span> <span class="n">column</span> <span class="n">to</span> <span class="n">visualize</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">fuel_abs</span><span class="p">,</span> <span class="n">CO2_abs</span><span class="p">)</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">metric</span><span class="o">-</span><span class="nb">min</span> <span class="o">&lt;</span><span class="n">Override</span> <span class="n">metric</span> <span class="n">minimum</span> <span class="k">for</span> <span class="n">color</span> <span class="n">scaling</span><span class="o">.&gt;</span> \
+<span class="o">--</span><span class="n">metric</span><span class="o">-</span><span class="nb">max</span> <span class="o">&lt;</span><span class="n">Override</span> <span class="n">metric</span> <span class="n">maximum</span> <span class="k">for</span> <span class="n">color</span> <span class="n">scaling</span><span class="o">&gt;</span> \
+</pre></div>
+</div>
+<p>Example execution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main_trafficinput</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">xml</span> <span class="n">fcdOutput</span><span class="o">.</span><span class="n">xml</span> <span class="o">--</span><span class="n">csv</span> <span class="n">testwholekista</span><span class="o">.</span><span class="n">csv</span> <span class="o">--</span><span class="n">road</span><span class="o">-</span><span class="n">csv</span> <span class="n">road_information</span><span class="o">.</span><span class="n">csv</span> <span class="o">--</span><span class="n">geojson</span> <span class="n">kistaosm</span><span class="o">.</span><span class="n">geojson</span> <span class="o">--</span><span class="n">vehicles</span><span class="o">-</span><span class="n">czml</span> <span class="n">czml_3Dmodels_test20250422test</span><span class="o">.</span><span class="n">czml</span> <span class="o">--</span><span class="n">roads</span><span class="o">-</span><span class="n">czml</span> <span class="n">kistaroad_noise_visualization</span><span class="o">.</span><span class="n">czml</span> <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">date</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">22</span> <span class="o">--</span><span class="n">current</span><span class="o">-</span><span class="n">time</span> <span class="mi">28800</span> <span class="o">--</span><span class="n">road</span><span class="o">-</span><span class="n">metric</span> <span class="s2">&quot;noise&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="gtfs-real-time-processing">
+<h2>GTFS Real-time Processing<a class="headerlink" href="#gtfs-real-time-processing" title="Link to this heading"></a></h2>
+<p>This part describes how to prepare GTFS real-time data visualization in addition to the offline simulated GTFS data.</p>
+<ul class="simple">
+<li><p><strong>Input</strong>:</p>
+<ul>
+<li><p>Protobuf .pb file (GTFS-Realtime vehicle positions)</p></li>
+</ul>
+</li>
+<li><p><strong>Function</strong>:</p>
+<ol class="arabic simple">
+<li><p>Parse .pb to JSON using google.transit.gtfs_realtime_pb2.</p></li>
+<li><p>Extract vehicle coordinates (latitude, longitude) and bearing, dynamically output to CZML format file for visualization</p></li>
+<li><p>Connecting with CesiumJS frontend to achieve data input and visualization.</p></li>
+</ol>
+</li>
+<li><p><strong>Output</strong>:</p>
+<ul>
+<li><p>Temporary real-time CZML stream (GTFS real-time data)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Detailed Steps</strong>:</p>
+<ol class="arabic simple">
+<li><p>First we need to download the gtfs-realtime.proto file on Google’s official link: https://github.com/google/transit/blob/master/gtfs-realtime/proto/gtfs-realtime.proto. This file is required to decode the GTFS real-time data stream encoded as binary data to produce human-readable data.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">grpc_tools</span><span class="o">.</span><span class="n">protoc</span> <span class="o">-</span><span class="n">I</span><span class="o">.</span> <span class="o">--</span><span class="n">python_out</span><span class="o">=.</span> <span class="o">--</span><span class="n">grpc_python_out</span><span class="o">=.</span> <span class="o">./</span><span class="n">gtfs</span><span class="o">-</span><span class="n">realtime</span><span class="o">.</span><span class="n">proto</span>
+</pre></div>
+</div>
+<p>This will generate two Python files for future analyze and process real-time traffic data from GTFS, such as the real-time location and status of buses and metros:</p>
+<ul class="simple">
+<li><p>gtfs-realtime_pb2.py: Contains the definition of gtfs real-time data structure</p></li>
+<li><p>gtfs-realtime_pb2_grpc.py: Contains code for gRPC services and clients</p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p>We use a MongoDB to store the real-time data temporary to create a historic data set for future analysis. For that purpose you need to set-up the MongoDB. Please find the connection specifications in <code class="docutils literal notranslate"><span class="pre">src/backend/gtfs_flask/app.py</span></code>. This code requests the real-time data from the GTFS provider’s API. You may adjust the URL and API Key in this file.</p></li>
+<li><p>Then start the MongoDB database service and start the Flask-based streaming service <code class="docutils literal notranslate"><span class="pre">src/backend/gtfs_flask/app.py</span></code>.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">gtfs_flask</span><span class="o">/</span><span class="n">app</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">api</span><span class="o">-</span><span class="n">key</span> <span class="o">&lt;</span><span class="n">Your</span> <span class="n">API</span> <span class="n">Key</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The main function of this code is to obtain real-time location information of public transportation vehicles and provide visual data. The application continuously retrieves vehicle data (including ID, latitude and longitude, timestamp, etc.) from the KoDa API through backend threads, stores the data in MongoDB, and maintains the historical location information of the vehicle for smooth position interpolation. In addition, the code will convert real-time vehicle data into CZML format (suitable for geographic visualization) and provide it to the front-end through an interface in CesiumJS, supporting viewing real-time vehicle status through web access.</p>
+<p>For city APIs without historical real-time data archiving, this method further allows to store all real-time data trajectories for later analysis.</p>
+<p>The visualization of this data is explained in the frontend section.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../input/tutorial_input.html" class="btn btn-neutral float-left" title="Input Layer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../frontend/tutorial_frontend.html" class="btn btn-neutral float-right" title="Frontend Layer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tong Mo, Jonas Jostmann, Zhenliang Ma.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
