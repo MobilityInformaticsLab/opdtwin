@@ -46,3 +46,11 @@ We need to visualize the building environment and vehicle trajectories, and Cesi
 ### Server Framework
 Currently, using Node.js + Express (visualization of simulation results)/ Flask + MongoDB (real-time GTFS data)
 
+# Cite
+Jostmann, J., Mo, T., Wang, H., & Ma, Z. (2026). ”Open source Digital Twin development pipeline for Public Transport: A case study in Stockholm”. Journal of Public Transportation, 28, 100149. https://doi.org/10.1016/j.jpubtr.2026.100149
+
+
+# Contact
+- Jonas Jostmann (jostmann@kth.se)
+- Tong Mo (tong33576@gmail.com)
+- Zhenliang Ma (zhema@kth.se)
